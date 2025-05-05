@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MEC;
 
 namespace SCPStats
@@ -29,10 +30,10 @@ namespace SCPStats
         {
             while (true)
             {
-                yield return Timing.WaitForSeconds(900f); // Wait 15 minutes
+                yield return Timing.WaitForSeconds(10f); // Wait 10 seconds
 
-                // Call your async kill upload method here
-                _ = WebSender.UploadKillsWithTokenAsync(); // Fire-and-forget
+                // Run the async method safely on a background thread
+                Task.Run(async () => await WebSender.UploadKillsWithTokenAsync());
             }
         }
     }

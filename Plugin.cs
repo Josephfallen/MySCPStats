@@ -7,7 +7,7 @@ namespace SCPStats
     {
         public override string Name => "MySCPStats";
         public override string Author => "Joseph_fallen";
-        public override Version Version => new(1, 2, 0);
+        public override Version Version => new(1, 2, 1);
         public static Plugin Instance { get; private set; }
         public TokenManager TokenManager { get; private set; }
 
