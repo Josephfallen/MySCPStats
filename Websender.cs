@@ -3,6 +3,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Exiled.API.Features;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SCPStats
 {
@@ -19,61 +21,34 @@ namespace SCPStats
                 return;
             }
 
+            var token = Plugin.Instance.TokenManager.CurrentToken;
+            if (string.IsNullOrEmpty(token))
+            {
+                Log.Warn("[SCPStats] No token available. Skipping upload.");
+                return;
+            }
+
             try
             {
-                var sb = new StringBuilder();
-
-                sb.Append("{\"server_id\":\"").Append(Server.Name).Append("\",");
-
-                sb.Append("\"kills\":[");
-                for (int i = 0; i < kills.Count; i++)
+                var payload = new
                 {
-                    var k = kills[i];
-                    sb.Append("{")
-                      .Append("\"PlayerName\":\"").Append(Escape(k.PlayerName)).Append("\",")
-                      .Append("\"PlayerId\":\"").Append(Escape(k.PlayerId)).Append("\",")
-                      .Append("\"PlayerClass\":\"").Append(Escape(k.PlayerClass)).Append("\",")
-                      .Append("\"KillerName\":\"").Append(Escape(k.KillerName)).Append("\",")
-                      .Append("\"KillerId\":\"").Append(Escape(k.KillerId)).Append("\",")
-                      .Append("\"KillerClass\":\"").Append(Escape(k.KillerClass)).Append("\",")
-                      .Append("\"DamageType\":\"").Append(Escape(k.DamageType)).Append("\",")
-                      .Append("\"WeaponOrCause\":\"").Append(Escape(k.WeaponOrCause)).Append("\",")
-                      .Append("\"Time\":\"").Append(k.Time).Append("\",")
-                      .Append("\"RoundTimeSeconds\":").Append(k.RoundTimeSeconds.ToString("F2"))
-                      .Append("}");
-                    if (i < kills.Count - 1) sb.Append(",");
-                }
-                sb.Append("],");
+                    server_id = Server.Name,
+                    kills = kills,
+                    games_played = games
+                };
 
-                sb.Append("\"games_played\":{");
-                int index = 0;
-                foreach (var kvp in games)
-                {
-                    sb.Append("\"").Append(Escape(kvp.Key)).Append("\":").Append(kvp.Value);
-                    if (++index < games.Count) sb.Append(",");
-                }
-                sb.Append("}}");
+                string json = JsonConvert.SerializeObject(payload);
 
-                var content = new StringContent(sb.ToString(), Encoding.UTF8, "application/json");
-
-                // ✅ FIXED LINE
-                var token = Plugin.Instance.TokenManager.CurrentToken;
-                if (string.IsNullOrEmpty(token))
-                {
-                    Log.Warn("[SCPStats] No token available. Skipping upload.");
-                    return;
-                }
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 using HttpClient client = new();
                 client.Timeout = TimeSpan.FromSeconds(5);
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
-                // Log the request body for debugging
-                Log.Debug($"[SCPStats] Request body: {sb.ToString()}");
+                Log.Debug($"[SCPStats] Request body: {json}");
 
                 var response = await client.PostAsync("https://myscpstats.com/api/uploadKills", content);
 
-                // Log response status for debugging
                 Log.Debug($"[SCPStats] Response status code: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
@@ -82,18 +57,14 @@ namespace SCPStats
                 }
                 else
                 {
-                    // Log the response content (body) for debugging in case of failure
                     var responseBody = await response.Content.ReadAsStringAsync();
                     Log.Warn($"[SCPStats] Upload failed: {response.StatusCode}. Response body: {responseBody}");
                 }
             }
             catch (Exception ex)
             {
-                // Log exception details for debugging
                 Log.Error($"[SCPStats] Upload error: {ex.Message}\n{ex.StackTrace}");
             }
         }
-
-        public static string Escape(string value) => value.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 }

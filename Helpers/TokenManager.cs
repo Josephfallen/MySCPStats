@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Exiled.API.Features;
+using Newtonsoft.Json.Linq; // Add this for JSON parsing
 
 namespace SCPStats
 {
@@ -17,32 +18,32 @@ namespace SCPStats
             {
                 Log.Info("[SCPStats] Requesting new token...");
 
-                var sb = new StringBuilder();
-                sb.Append("{")
-                  .Append("\"username\":\"server\",")
-                  .Append("\"password\":\"049-is-cool\"")
-                  .Append("}");
+                var json = new JObject
+                {
+                    ["username"] = "server",
+                    ["password"] = "049-is-cool"
+                };
 
-                var content = new StringContent(sb.ToString(), Encoding.UTF8, "application/json");
+                var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
                 httpClient.Timeout = TimeSpan.FromSeconds(5);
 
                 var response = await httpClient.PostAsync("https://myscpstats.com/api/get-token", content);
+                var body = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Log.Warn($"[SCPStats] Token fetch failed: {response.StatusCode}");
+                    Log.Warn($"[SCPStats] Token fetch failed: {response.StatusCode} - {body}");
                     return false;
                 }
 
-                var body = await response.Content.ReadAsStringAsync();
-                var token = ExtractToken(body);
-                if (string.IsNullOrEmpty(token))
+                var parsed = JObject.Parse(body);
+                if (!parsed.TryGetValue("token", out JToken tokenValue))
                 {
                     Log.Warn("[SCPStats] Token not found in response.");
                     return false;
                 }
 
-                CurrentToken = token;
+                CurrentToken = tokenValue.ToString();
                 Log.Info("[SCPStats] Token retrieved successfully.");
                 return true;
             }
@@ -51,21 +52,6 @@ namespace SCPStats
                 Log.Error($"[SCPStats] Token fetch error: {ex.Message}");
                 return false;
             }
-        }
-
-        private string ExtractToken(string json)
-        {
-            const string tokenKey = "\"token\":\"";
-            int start = json.IndexOf(tokenKey);
-            if (start == -1)
-                return null;
-
-            start += tokenKey.Length;
-            int end = json.IndexOf('"', start);
-            if (end == -1)
-                return null;
-
-            return json.Substring(start, end - start);
         }
     }
 }
