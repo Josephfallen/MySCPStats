@@ -17,24 +17,39 @@ namespace SCPStats
 
             if (kills.Count == 0 && games.Count == 0)
             {
-                Log.Info("[SCPStats] No data to upload.");
+                Log.Debug("[SCPStats] No data to upload.");
                 return;
             }
 
             var token = Plugin.Instance.TokenManager.CurrentToken;
             if (string.IsNullOrEmpty(token))
             {
-                Log.Warn("[SCPStats] No token available. Skipping upload.");
+                Log.Debug("[SCPStats] No token available. Skipping upload.");
                 return;
             }
 
             try
             {
+                // Encrypt player IDs in kills
+                foreach (var kill in kills)
+                {
+                    kill.KillerId = CryptoHelper.Encrypt(kill.KillerId);  // Encrypt KillerId
+                    kill.PlayerId = CryptoHelper.Encrypt(kill.PlayerId);  // Encrypt PlayerId
+                }
+
+                // Encrypt player IDs in games and convert to object format
+                var gamesPlayed = new Dictionary<string, int>();
+                foreach (var game in games)
+                {
+                    string encryptedPlayerId = CryptoHelper.Encrypt(game.Key);  // Encrypt player ID
+                    gamesPlayed[encryptedPlayerId] = game.Value;  // Add player ID and game count to dictionary
+                }
+
                 var payload = new
                 {
                     server_id = Server.Name,
                     kills = kills,
-                    games_played = games
+                    games_played = gamesPlayed  // Send gamesPlayed as an object (dictionary)
                 };
 
                 string json = JsonConvert.SerializeObject(payload);
@@ -53,12 +68,12 @@ namespace SCPStats
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Log.Info($"[SCPStats] Successfully uploaded {kills.Count} kills and {games.Count} player rounds.");
+                    Log.Debug($"[SCPStats] Successfully uploaded {kills.Count} kills and {games.Count} player rounds.");
                 }
                 else
                 {
                     var responseBody = await response.Content.ReadAsStringAsync();
-                    Log.Warn($"[SCPStats] Upload failed: {response.StatusCode}. Response body: {responseBody}");
+                    Log.Debug($"[SCPStats] Upload failed: {response.StatusCode}. Response body: {responseBody}");
                 }
             }
             catch (Exception ex)
@@ -66,5 +81,6 @@ namespace SCPStats
                 Log.Error($"[SCPStats] Upload error: {ex.Message}\n{ex.StackTrace}");
             }
         }
+
     }
 }

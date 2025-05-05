@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Event Handlers\EventHandler.cs" />
+    <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\TokenManager.cs" />
     <Compile Include="Killlogger.cs" />
     <Compile Include="PlayerStatsTracker.cs" />
