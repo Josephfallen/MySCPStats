@@ -1,6 +1,11 @@
 
 # MySCPStats Plugin
 
+This plugin has support for:
+- Exiled v9.6.0
+- Exiled 9.5.2
+- LabAPI v0.7.0 (Coming soon)
+
 ## Installation (English)
 
 ### Steps to Install
