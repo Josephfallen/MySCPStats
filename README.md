@@ -4,7 +4,7 @@
 This plugin has support for:
 - Exiled v9.6.0
 - Exiled 9.5.2
-- LabAPI v0.7.0 (Coming soon)
+- LabAPI v1.0.2 (Coming soon)
 
 ## Installation (English)
 
