@@ -6,6 +6,8 @@ This plugin has support for:
 - Exiled v9.5.2
 - LabAPI v1.0.2 (Coming soon)
 
+### Note: Developer will have a custom tag in-game to tell people that they are a MySCPStats Developer
+
 ## Installation (English)
 
 ### Steps to Install
