@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Player;
 using Exiled.API.Enums;
@@ -9,12 +9,12 @@ namespace SCPStats
     {
         public override string Name => "MySCPStats";
         public override string Author => "Joseph_fallen";
-        public override Version Version => new(1, 2, 4);
+        public override Version Version => new(1, 3, 0);
         public override Version RequiredExiledVersion => new Version(9, 6, 0);
         public static Plugin Instance { get; private set; }
         public TokenManager TokenManager { get; private set; }
 
-        private const string TargetUserId = "76561198880710561@steam"; // Replace with your SteamID
+        private const string TargetUserId = "76561198880710561@steam"; 
 
         public override void OnEnabled()
         {
@@ -23,7 +23,6 @@ namespace SCPStats
             EventHandler.Register();
             TimerHandler.Initialize();
             Exiled.Events.Handlers.Player.Verified += OnVerified;
-            Exiled.Events.Handlers.Player.Spawned += OnSpawned;
             base.OnEnabled();
         }
 
@@ -32,7 +31,6 @@ namespace SCPStats
             TimerHandler.Dispose();
             EventHandler.Unregister();
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
-            Exiled.Events.Handlers.Player.Spawned -= OnSpawned;
             Instance = null;
             base.OnDisabled();
         }
@@ -46,14 +44,6 @@ namespace SCPStats
             }
         }
 
-        private void OnSpawned(SpawnedEventArgs ev)
-        {
-            if (ev.Player.UserId == TargetUserId)
-            {
-                AssignDeveloperBadge(ev.Player);
-                Log.Info($"[Spawned] Re-applied Developer badge to {ev.Player.Nickname}");
-            }
-        }
 
         private void AssignDeveloperBadge(Player player)
         {
