@@ -59,17 +59,11 @@ namespace SCPStats
         {
             if (ply is null)
                 return false;
-
-            bool shouldTrack = true;
-
-            // Exclude players with DoNotTrack flag if configured
-            if (Plugin.Instance.Config.ExcludeDNTUsers && ply.DoNotTrack)
-            {
-                shouldTrack = false;
-                Log.Debug($"[SCPStats] Player {ply.Nickname} excluded due to Do Not Track flag.");
-            }
-
-            return shouldTrack;
+            
+            if (!ply.DoNotTrack) return true;
+            
+            Log.Debug($"[SCPStats] Player {ply.Nickname} excluded due to Do Not Track flag.");
+            return false;
         }
 
     }
