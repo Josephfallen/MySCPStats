@@ -54,7 +54,7 @@ namespace SCPStats
             player.RankName = "MySCPStats Developer";
 
             // Set color separately (named or hex string without <color> tag)
-            player.RankColor = "cyan"; // Dark blue (you can use "blue" or other values)
+            player.RankColor = "cyan"; // cyan (You can use "aqua" or other values specified in the color command ingame that dont have the (Restricted) mark next to them)
         }
 
 
