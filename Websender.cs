@@ -24,32 +24,32 @@ namespace SCPStats
             var token = Plugin.Instance.TokenManager.CurrentToken;
             if (string.IsNullOrEmpty(token))
             {
-                Log.Debug("[SCPStats] No token available. Skipping upload.");
+                Log.Warn("[SCPStats] No token available. Skipping upload.");
                 return;
             }
 
             try
             {
-                // Encrypt player IDs in kills
+                // Encrypt PlayerId and KillerId in kills
                 foreach (var kill in kills)
                 {
-                    kill.KillerId = CryptoHelper.Encrypt(kill.KillerId);  // Encrypt KillerId
-                    kill.PlayerId = CryptoHelper.Encrypt(kill.PlayerId);  // Encrypt PlayerId
+                    kill.PlayerId = EncryptPlayerId(kill.PlayerId);
+                    kill.KillerId = EncryptPlayerId(kill.KillerId);
+                    kill.WeaponOrCause = EncryptPlayerId(kill.WeaponOrCause); // Encrypt Steam ID in WeaponOrCause as well
                 }
 
-                // Encrypt player IDs in games and convert to object format
-                var gamesPlayed = new Dictionary<string, int>();
+                // Encrypt the PlayerId for the games_played data
+                var encryptedGamesPlayed = new Dictionary<string, int>();
                 foreach (var game in games)
                 {
-                    string encryptedPlayerId = CryptoHelper.Encrypt(game.Key);  // Encrypt player ID
-                    gamesPlayed[encryptedPlayerId] = game.Value;  // Add player ID and game count to dictionary
+                    encryptedGamesPlayed[EncryptPlayerId(game.Key)] = game.Value;
                 }
 
                 var payload = new
                 {
                     server_id = Server.Name,
                     kills = kills,
-                    games_played = gamesPlayed  // Send gamesPlayed as an object (dictionary)
+                    games_played = encryptedGamesPlayed
                 };
 
                 string json = JsonConvert.SerializeObject(payload);
@@ -59,8 +59,6 @@ namespace SCPStats
                 using HttpClient client = new();
                 client.Timeout = TimeSpan.FromSeconds(5);
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-
-                Log.Debug($"[SCPStats] Request body: {json}");
 
                 var response = await client.PostAsync("https://myscpstats.com/api/uploadKills", content);
 
@@ -82,5 +80,24 @@ namespace SCPStats
             }
         }
 
+        private static string EncryptPlayerId(string input)
+        {
+            // This method encrypts the PlayerId and Steam IDs, replacing them with the encrypted versions
+            if (string.IsNullOrEmpty(input)) return input;
+
+            // Encrypt Steam IDs like '76561198880710561@steam'
+            string pattern = @"\d{17}@steam"; // Pattern to match Steam IDs
+            var regex = new System.Text.RegularExpressions.Regex(pattern);
+
+            // Replace all occurrences of Steam ID with encrypted version
+            return regex.Replace(input, match => EncryptSteamId(match.Value));
+        }
+
+        private static string EncryptSteamId(string steamId)
+        {
+            // Here you can implement your encryption logic. Example:
+            var encryptedSteamId = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(steamId));
+            return encryptedSteamId;
+        }
     }
 }

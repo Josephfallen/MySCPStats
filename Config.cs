@@ -5,8 +5,8 @@ namespace SCPStats
     public class Config : IConfig
     {
         public bool IsEnabled { get; set; } = true;
-        public bool Debug { get; set; } = true;
+        public bool Debug { get; set; } = false;
         public bool ExcludeDNTUsers { get; set; } = true;
-        public string ServerId { get; set; } = "1";
+        public bool ShowDeveloperBadge { get; set; } = true;
     }
 }
