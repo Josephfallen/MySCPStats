@@ -1,4 +1,12 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="CryptoHelper.cs" company="MySCPStats">
+// Copyright (c) joseph_fallen. All rights reserved.
+// Licensed under the CC BY-SA 3.0 license.
+// </copyright>
+// -----------------------------------------------------------------------
+
+
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;

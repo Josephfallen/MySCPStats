@@ -1,10 +1,18 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="Websender.cs" company="MySCPStats">
+// Copyright (c) joseph_fallen. All rights reserved.
+// Licensed under the CC BY-SA 3.0 license.
+// </copyright>
+// -----------------------------------------------------------------------
+
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Exiled.API.Features;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 
 namespace SCPStats
 {
@@ -21,7 +29,7 @@ namespace SCPStats
                 return;
             }
 
-            var token = Plugin.Instance.TokenManager.CurrentToken;
+            var token = Plugin.Instance.VerificationManager.CurrentToken;
             if (string.IsNullOrEmpty(token))
             {
                 Log.Warn("[SCPStats] No token available. Skipping upload.");
@@ -58,7 +66,7 @@ namespace SCPStats
 
                 using HttpClient client = new();
                 client.Timeout = TimeSpan.FromSeconds(5);
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var response = await client.PostAsync("https://myscpstats.com/api/uploadKills", content);
 
