@@ -1,4 +1,12 @@
-﻿using Exiled.API.Features;
+﻿// -----------------------------------------------------------------------
+// <copyright file="EventHandler.cs" company="MySCPStats">
+// Copyright (c) joseph_fallen. All rights reserved.
+// Licensed under the CC BY-SA 3.0 license.
+// </copyright>
+// -----------------------------------------------------------------------
+using System.Threading.Tasks;
+using Exiled.API.Features;
+using MEC;
 
 namespace SCPStats
 {
@@ -8,6 +16,7 @@ namespace SCPStats
         {
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;  // Fully qualified reference for Server.RoundStarted
             Exiled.Events.Handlers.Player.Died += OnPlayerDeath;  // Fully qualified reference for Player.Died
+
         }
 
         public static void Unregister()
@@ -16,18 +25,29 @@ namespace SCPStats
             Exiled.Events.Handlers.Player.Died -= OnPlayerDeath;  // Fully qualified reference for Player.Died
         }
 
-        private static void OnRoundStarted()
+        private static async void OnRoundStarted()
         {
-            if (Plugin.Instance?.TokenManager != null)
-                _ = Plugin.Instance.TokenManager.FetchTokenAsync();
-            else
-                Log.Warn("[SCPStats] TokenManager is null. Token will not be fetched.");
+            var tokenManager = Plugin.Instance?.VerificationManager;
+
+            if (tokenManager == null)
+            {
+                Log.Warn("[SCPStats] TokenManager is null. Cannot verify server.");
+                return;
+            }
+
+            bool isVerified = await tokenManager.AutoVerify();
+
+            if (!isVerified)
+            {
+                Log.Error("[SCPStats] Server is NOT verified! Please wait.");
+                return;
+            }
 
             TimerHandler.RoundStarted();
 
-            foreach (var player in Exiled.API.Features.Player.List)  // Use Exiled.API.Features.Player.List
+            foreach (var player in Exiled.API.Features.Player.List)
             {
-                if (!ShouldTrackPlayer(player))  // Call helper function to check if player should be tracked
+                if (!ShouldTrackPlayer(player))
                 {
                     Log.Debug($"[SCPStats] Skipping stat registration for {player.Nickname} due to DNT or other conditions.");
                     continue;
@@ -39,9 +59,9 @@ namespace SCPStats
 
         private static void OnPlayerDeath(Exiled.Events.EventArgs.Player.DiedEventArgs ev)
         {
-            var killer = ev.Attacker;  // Use Attacker instead of Killer
+            var killer = ev.Attacker;
 
-            if (killer != null && !ShouldTrackPlayer(killer))  // Call helper function to check if killer should be tracked
+            if (killer != null && !ShouldTrackPlayer(killer))
             {
                 Log.Debug($"[SCPStats] Skipping kill log for {killer.Nickname} due to DNT or other conditions.");
                 return;
@@ -60,17 +80,11 @@ namespace SCPStats
             if (ply is null)
                 return false;
 
-            bool shouldTrack = true;
+            if (!ply.DoNotTrack)
+                return true;
 
-            // Exclude players with DoNotTrack flag if configured
-            if (Plugin.Instance.Config.ExcludeDNTUsers && ply.DoNotTrack)
-            {
-                shouldTrack = false;
-                Log.Debug($"[SCPStats] Player {ply.Nickname} excluded due to Do Not Track flag.");
-            }
-
-            return shouldTrack;
+            Log.Debug($"[SCPStats] Player {ply.Nickname} excluded due to Do Not Track flag.");
+            return false;
         }
-
     }
 }

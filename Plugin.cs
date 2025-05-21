@@ -1,7 +1,16 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------
+// <copyright file="Plugin.cs" company="MySCPStats">
+// Copyright (c) joseph_fallen. All rights reserved.
+// Licensed under the CC BY-SA 3.0 license.
+// </copyright>
+// -----------------------------------------------------------------------
+using System;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Player;
 using Exiled.API.Enums;
+using CommandSystem;
+using MySCPStats.Loader;
+
 
 namespace SCPStats
 {
@@ -9,19 +18,21 @@ namespace SCPStats
     {
         public override string Name => "MySCPStats";
         public override string Author => "Joseph_fallen";
-        public override Version Version => new(1, 3, 0);
+        public override Version Version => new(1, 4, 0);
         public override Version RequiredExiledVersion => new Version(9, 6, 0);
         public static Plugin Instance { get; private set; }
-        public TokenManager TokenManager { get; private set; }
+        public VerificationManager VerificationManager { get; private set; }
 
-        private const string TargetUserId = "76561198880710561@steam"; 
+        private const string TargetUserId = "76561198880710561@steam";
 
         public override void OnEnabled()
         {
             Instance = this;
-            TokenManager = new TokenManager();
+            VerificationManager = new VerificationManager();
+            VerificationManager.AutoVerify();
             EventHandler.Register();
             TimerHandler.Initialize();
+            Log.Info(LoaderMessages.GetMessage());
             Exiled.Events.Handlers.Player.Verified += OnVerified;
             base.OnEnabled();
         }
@@ -54,7 +65,7 @@ namespace SCPStats
             player.RankName = "MySCPStats Developer";
 
             // Set color separately (named or hex string without <color> tag)
-            player.RankColor = "blue"; // Dark blue (you can use "blue" or other values)
+            player.RankColor = "cyan"; // Dark blue (you can use "blue" or other values)
         }
 
 
