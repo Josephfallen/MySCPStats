@@ -48,6 +48,9 @@ namespace SCPStats
 
         private void OnVerified(VerifiedEventArgs ev)
         {
+            if (!Plugin.Instance.Config.ShowDeveloperBadge)
+                return;
+
             if (ev.Player.UserId == TargetUserId)
             {
                 AssignDeveloperBadge(ev.Player);
