@@ -18,7 +18,7 @@ namespace SCPStats
     {
         public override string Name => "MySCPStats";
         public override string Author => "Joseph_fallen";
-        public override Version Version => new(1, 4, 1);
+        public override Version Version => new(1, 4, 2);
         public override Version RequiredExiledVersion => new Version(9, 6, 0);
         public static Plugin Instance { get; private set; }
         public VerificationManager VerificationManager { get; private set; }
@@ -34,6 +34,8 @@ namespace SCPStats
             TimerHandler.Initialize();
             Log.Info(LoaderMessages.GetMessage());
             Exiled.Events.Handlers.Player.Verified += OnVerified;
+            if (Config.EnableAutoUpdate)
+                _ = AutoUpdater.RunAsync();
             base.OnEnabled();
         }
 
@@ -57,6 +59,7 @@ namespace SCPStats
                 Log.Info($"[Verified] Assigned Developer badge to {ev.Player.Nickname}");
             }
         }
+
 
 
         private void AssignDeveloperBadge(Player player)

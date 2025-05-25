@@ -17,6 +17,9 @@ namespace SCPStats
         public bool Debug { get; set; } = false;
         [Description("Should developers get credit if they join the server?")]
         public bool ShowDeveloperBadge { get; set; } = true;
+        [Description("Enable automatic plugin updates.")]
+        public bool EnableAutoUpdate { get; set; } = true;
+
 
     }
 }
