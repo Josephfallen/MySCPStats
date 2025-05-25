@@ -5,13 +5,12 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+
+using System;
+
 namespace MySCPStats.Loader
 {
-    using System;
-
-    /// <summary>
-    /// Contains different loader messages for MySCPStats.
-    /// </summary>
+    
     public static class LoaderMessages
     {
         /// <summary>
