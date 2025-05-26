@@ -26,7 +26,7 @@ namespace SCPStats
             {
                 Log.Info("[SCPStats] Fetching public IP for verification...");
 
-                httpClient.Timeout = TimeSpan.FromSeconds(5);
+                httpClient.Timeout = TimeSpan.FromSeconds(2);
                 var ipResponse = await httpClient.GetAsync("https://api.ipify.org");
                 if (!ipResponse.IsSuccessStatusCode)
                 {

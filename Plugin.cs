@@ -18,7 +18,7 @@ namespace SCPStats
     {
         public override string Name => "MySCPStats";
         public override string Author => "Joseph_fallen";
-        public override Version Version => new(1, 5, 0);
+        public override Version Version => new(1, 5, 2);
         public override Version RequiredExiledVersion => new Version(9, 6, 0);
         public static Plugin Instance { get; private set; }
         public VerificationManager VerificationManager { get; private set; }
@@ -29,7 +29,6 @@ namespace SCPStats
         {
             Instance = this;
             VerificationManager = new VerificationManager();
-            VerificationManager.AutoVerify();
             EventHandler.Register();
             TimerHandler.Initialize();
             Log.Info(LoaderMessages.GetMessage());
