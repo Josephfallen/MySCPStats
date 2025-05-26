@@ -56,7 +56,7 @@ namespace SCPStats
                 var payload = new
                 {
                     server_id = Server.Name,
-                    kills,
+                    kills = kills,
                     games_played = encryptedGamesPlayed
                 };
 
