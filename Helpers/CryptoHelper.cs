@@ -30,10 +30,8 @@ namespace SCPStats
             using MemoryStream ms = new();
             using (CryptoStream cs = new(ms, encryptor, CryptoStreamMode.Write))
             {
-                using (StreamWriter writer = new(cs))
-                {
-                    writer.Write(plainText);
-                }
+                using StreamWriter writer = new(cs);
+                writer.Write(plainText);
             }
 
             // Return the encrypted text as Base64 string

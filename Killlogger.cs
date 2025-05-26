@@ -14,7 +14,7 @@ namespace SCPStats
 {
     public static class KillLogger
     {
-        private static readonly List<KillLog> kills = new();
+        private static readonly List<KillLog> kills = [];
 
         public static void LogKill(DiedEventArgs ev)
         {
