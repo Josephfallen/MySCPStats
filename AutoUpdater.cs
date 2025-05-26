@@ -18,7 +18,7 @@ namespace SCPStats
     {
         private const string RepoOwner = "Josephfallen";
         private const string RepoName = "MySCPStats";
-        private const string PluginFileName = "SCPStats.dll";
+        private const string PluginFileName = "myscpstats.dll";
 
         private static readonly string GithubApiLatestRelease = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
         private static readonly string PluginPath = Path.Combine(Paths.Plugins, PluginFileName);
