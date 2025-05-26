@@ -1,0 +1,69 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+.qodo/
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# Visual Studio auto-generated files
+.suo
+.user
+.userosscache
+.sln.docstates
+.userprefs
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+# NuGet v3's project.json files produces more ignorable files
+*.nuget.props
+*.nuget.targets
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Visual Studio code coverage results
+*.coverage
+*.coveragexml
+
+# Build results cache
+*.cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# .NET Core
+**/Properties/launchSettings.json
+*.pfx
+*.publishsettings
+
+# Local configuration files
+appsettings.Development.json
+*.local.json
+
+# Test Results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# Misc
+.DS_Store
+Thumbs.db

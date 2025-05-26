@@ -10,7 +10,7 @@ namespace SCPStats
 {
     public static class PlayerStatsTracker
     {
-        private static readonly Dictionary<string, int> GamesPlayed = new();
+        private static readonly Dictionary<string, int> GamesPlayed = [];
 
         public static void RegisterPlayer(string userId)
         {

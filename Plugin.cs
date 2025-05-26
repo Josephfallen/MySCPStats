@@ -59,8 +59,6 @@ namespace SCPStats
             }
         }
 
-
-
         private void AssignDeveloperBadge(Player player)
         {
             // Remove any hidden or default badges
@@ -72,9 +70,6 @@ namespace SCPStats
             // Set color separately (named or hex string without <color> tag)
             player.RankColor = "cyan"; // Dark blue (you can use "blue" or other values)
         }
-
-
-
 
     }
 }

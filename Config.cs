@@ -13,10 +13,13 @@ namespace SCPStats
     {
         [Description("Is the plugin enabled.")]
         public bool IsEnabled { get; set; } = true;
+
         [Description("Should debug messages be shown in a server console.")]
         public bool Debug { get; set; } = false;
+
         [Description("Should developers get credit if they join the server?")]
         public bool ShowDeveloperBadge { get; set; } = true;
+
         [Description("Enable automatic plugin updates.")]
         public bool EnableAutoUpdate { get; set; } = true;
 

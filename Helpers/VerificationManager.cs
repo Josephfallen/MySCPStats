@@ -72,6 +72,7 @@ namespace SCPStats
                 Log.Info("[SCPStats] Verification successful, token stored.");
                 return true;
             }
+
             catch (Exception ex)
             {
                 Log.Error($"[SCPStats] Verification error: {ex}");
