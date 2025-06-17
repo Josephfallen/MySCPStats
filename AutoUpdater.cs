@@ -39,7 +39,9 @@ namespace SCPStats
                 var release = JsonDocument.Parse(json).RootElement;
 
                 string latestVersion = release.GetProperty("tag_name").GetString()?.TrimStart('v');
-                string currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                string currentVersion = $"{version.Major}.{version.Minor}.{version.Build}";
+
 
                 if (string.IsNullOrWhiteSpace(latestVersion))
                 {
