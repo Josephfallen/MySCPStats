@@ -64,7 +64,10 @@ namespace SCPStats
 
                     if (name.Equals(PluginFileName, StringComparison.OrdinalIgnoreCase))
                     {
-                        string tempPath = PluginPath + ".update";
+                        // Use a different file name for temporary download that doesn't add to the extension
+                        string tempDir = Path.GetDirectoryName(PluginPath);
+                        string tempFileName = "temp_" + PluginFileName;
+                        string tempPath = Path.Combine(tempDir, tempFileName);
 
                         Log.Info("[AutoUpdater] Downloading updated plugin...");
 
@@ -72,11 +75,38 @@ namespace SCPStats
                         using var fileStream = File.Create(tempPath);
                         await downloadStream.CopyToAsync(fileStream);
 
-                        // Replace old file
-                        File.Delete(PluginPath);
-                        File.Move(tempPath, PluginPath);
+                        // Make sure fileStream is closed before replacing files
+                        fileStream.Close();
 
-                        Log.Info("[AutoUpdater] Update downloaded successfully! Restart the server to apply.");
+                        try
+                        {
+                            // Replace old file with appropriate error handling
+                            if (File.Exists(PluginPath))
+                            {
+                                File.Delete(PluginPath);
+                            }
+                            
+                            File.Move(tempPath, PluginPath);
+                            Log.Info("[AutoUpdater] Update downloaded successfully! Restart the server to apply.");
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error($"[AutoUpdater] Failed to replace plugin file: {ex.Message}");
+                            
+                            // Try to clean up the temp file if possible
+                            if (File.Exists(tempPath))
+                            {
+                                try
+                                {
+                                    File.Delete(tempPath);
+                                }
+                                catch
+                                {
+                                    // Ignore cleanup errors
+                                }
+                            }
+                        }
+                        
                         return;
                     }
                 }
